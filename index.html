@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#073b2a">
+<title>BUCOSA | Student Registration</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --green: #075b40;
+  --dark: #073b2a;
+  --gold: #f2bd48;
+  --bg: #f3f7f4;
+  --white: #fff;
+  --text: #17241d;
+  --muted: #66736b;
+  --border: #d9e3dc;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  background: var(--dark);
+  color: white;
+  padding: 25px 18px;
+  text-align: center;
+  border-bottom: 5px solid var(--gold);
+}
+.brand {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+header p { margin: 8px 0 0; color: #e6eee9; }
+main {
+  max-width: 760px;
+  margin: 28px auto;
+  padding: 0 15px;
+}
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 5px 20px #073b2a0c;
+}
+h1 { margin: 0 0 8px; font-size: 25px; }
+.intro { color: var(--muted); line-height: 1.6; }
+.notice {
+  background: #fff8e7;
+  border-left: 4px solid var(--gold);
+  padding: 12px;
+  margin: 18px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.field { display: flex; flex-direction: column; gap: 7px; }
+.full { grid-column: 1 / -1; }
+label { font-weight: 700; font-size: 14px; }
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd7ce;
+  border-radius: 8px;
+  background: white;
+  font-size: 15px;
+}
+input:focus, select:focus {
+  outline: 2px solid #0c7956;
+  border-color: var(--green);
+}
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--green);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+button:disabled { opacity: .6; cursor: wait; }
+.message {
+  display: none;
+  padding: 13px;
+  border-radius: 8px;
+  margin: 16px 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.success { display: block; background: #e6f6ec; color: #14532d; }
+.error { display: block; background: #fff0f0; color: #9b1c1c; }
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (max-width: 560px) {
+  .grid { grid-template-columns: 1fr; }
+  .full { grid-column: auto; }
+  .panel { padding: 18px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">BUCOSA</div>
+  <p>MMUST Bungoma Students Association</p>
+</header>
+
+<main>
+  <section class="panel">
+    <h1>Student Registration</h1>
+    <p class="intro">
+      Complete this form to submit your registration to BUCOSA.
+      Your submission will be reviewed by the administrators.
+    </p>
+
+    <div class="notice">
+      Please enter accurate information. Submitting this form does
+      not automatically confirm membership. Your registration will
+      remain pending review.
+    </div>
+
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <form id="registrationForm">
+      <div class="grid">
+        <div class="field full">
+          <label for="full_name">Full name *</label>
+          <input id="full_name" name="full_name" required maxlength="120"
+            autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="admission_number">Admission number *</label>
+          <input id="admission_number" name="admission_number" required
+            maxlength="60">
+        </div>
+
+        <div class="field">
+          <label for="phone_number">Phone number</label>
+          <input id="phone_number" name="phone_number" type="tel"
+            maxlength="25" autocomplete="tel">
+        </div>
+
+        <div class="field full">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" maxlength="254"
+            autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label for="constituency">Constituency *</label>
+          <select id="constituency" name="constituency" required>
+            <option value="">Select constituency</option>
+            <option>Bumula</option>
+            <option>Kabuchai</option>
+            <option>Kanduyi</option>
+            <option>Kimilili</option>
+            <option>Mt. Elgon</option>
+            <option>Sirisia</option>
+            <option>Tongaren</option>
+            <option>Webuye East</option>
+            <option>Webuye West</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="course">Course</label>
+          <input id="course" name="course" maxlength="120">
+        </div>
+
+        <div class="field full">
+          <label for="year_of_study">Year of study</label>
+          <select id="year_of_study" name="year_of_study">
+            <option value="">Select year</option>
+            <option>Year 1</option>
+            <option>Year 2</option>
+            <option>Year 3</option>
+            <option>Year 4</option>
+            <option>Year 5</option>
+            <option>Year 6</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <button id="submitButton" type="submit">
+            Submit Registration
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer>
+  BUCOSA Student Registration · Keep your admission details private.
+</footer>
+
+<script>
+const SUPABASE_URL = "https://xqmweiuscmzsinwzcysw.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vUXAE63fYniYTPC46J1XPw_b2qhCzbv";
+
+const messageBox = document.getElementById("message");
+const form = document.getElementById("registrationForm");
+const submitButton = document.getElementById("submitButton");
+
+function showMessage(text, type) {
+  messageBox.textContent = text;
+  messageBox.className = "message " + type;
+}
+
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  if (
+    SUPABASE_URL.includes("PASTE_YOUR_") ||
+    SUPABASE_PUBLISHABLE_KEY.includes("PASTE_YOUR_")
+  ) {
+    showMessage("Setup is incomplete. Please contact the BUCOSA administrator.", "error");
+    return;
+  }
+
+  if (!window.supabase) {
+    showMessage("The registration service could not load. Check your internet connection and try again.", "error");
+    return;
+  }
+
+  const values = new FormData(form);
+  const record = {
+    full_name: String(values.get("full_name") || "").trim(),
+    admission_number: String(values.get("admission_number") || "").trim(),
+    phone_number: String(values.get("phone_number") || "").trim() || null,
+    email: String(values.get("email") || "").trim() || null,
+    constituency: String(values.get("constituency") || ""),
+    course: String(values.get("course") || "").trim() || null,
+    year_of_study: String(values.get("year_of_study") || "") || null,
+    status: "Pending"
+  };
+
+  if (!record.full_name || !record.admission_number || !record.constituency) {
+    showMessage("Please complete all required fields.", "error");
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+
+  try {
+    const client = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const { error } = await client
+      .from("student_registrations")
+      .insert([record]);
+
+    if (error) {
+      if (error.code === "23505") {
+        showMessage("This admission number has already been registered. Please check it or contact BUCOSA.", "error");
+      } else {
+        console.error("Registration submission failed:", error);
+        showMessage("Registration could not be submitted. Please check your details and internet connection, then try again. If the problem continues, contact BUCOSA.", "error");
+      }
+      return;
+    }
+
+    form.reset();
+    showMessage("Registration submitted successfully! Your application is pending review by BUCOSA.", "success");
+  } catch (error) {
+    console.error("Registration error:", error);
+    showMessage("The registration service is temporarily unavailable. Please try again later.", "error");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit Registration";
+  }
+});
+</script>
+</body>
+</html>
